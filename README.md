@@ -1,5 +1,3 @@
-Thibaut Castillo L3B
-
 # Projet Hex - Algorithmique Avancée
 
 Ce projet est une implémentation du jeu de Hex en langage C, permettant des affrontements entre :
