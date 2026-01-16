@@ -1,16 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include <time.h>
-#include <omp.h>
 #include "hex.h"
 
-#define TYPE_HUMAN 1
-#define TYPE_MINIMAX 2
-#define TYPE_ALPHABETA 3
-
 // Jeux du joueur
-void player_move(HexGame *game, char player, int *row, int *col) {
+void player_move(HexGame *game, int *row, int *col) {
     char col_char;
     int r;
     char input[10];
@@ -24,8 +16,9 @@ void player_move(HexGame *game, char player, int *row, int *col) {
             // Conversion minuscule -> majuscule
             if (col_char >= 'a' && col_char <= 'z') col_char -= 32;
             int c = col_char - 'A'; // Conversion Lettre -> Index colonne (0-5)
-            r = r - 1;              // Conversion Chiffre -> Index ligne (0-5)
+            r = r - 1; // Conversion Chiffre -> Index ligne (0-5)
             
+            // Validation du coup
             if (valid_move(game, r, c)) {
                 *row = r;
                 *col = c;
@@ -34,7 +27,7 @@ void player_move(HexGame *game, char player, int *row, int *col) {
                 printf("Coup invalide.\n");
             }
         } else {
-            printf("Format invalide.\n");
+            printf("Format invalide. (Lettre + Chiffre)\n");
         }
     }
 }
@@ -47,33 +40,36 @@ int main() {
     int type1, type2;
 
     printf("------------- JEU HEX -------------\n");
-    printf("Pramètre Joueur 1 \033[31mX\033[0m - Haut/Bas) :\n");
+    printf("Paramètre Joueur 1 \033[31mX\033[0m (Haut -> Bas) :\n");
     printf("1. Humain\n2. Minimax\n3. Alpha-Beta\nChoix : ");
     scanf("%d", &type1);
     
-    printf("Pramètre Joueur 2 \033[34mO\033[0m - Gauche/Droite) :\n");
+    printf("Paramètre Joueur 2 \033[34mO\033[0m (Gauche -> Droite) :\n");
     printf("1. Humain\n2. Minimax\n3. Alpha-Beta\nChoix : ");
     scanf("%d", &type2);
     
+    // Nettoyage du tampon d'entrée après scanf
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 
     int turn = 0;
     bool game_over = false;
     
+    // Affichage initial du plateau
     print_board(&game);
 
     while (!game_over) {
+        // Détermination du joueur courant (alternance)
         char current_player = (turn % 2 == 0) ? PLAYER1 : PLAYER2;
         int current_type = (turn % 2 == 0) ? type1 : type2;
         
-        printf("\n------------- Tour %d : du Joueur %c (%s) -------------\n", turn + 1, current_player, 
-               (current_type == TYPE_HUMAN) ? "Humain" : "IA");
+        printf("\n------------- Tour %d : du Joueur %c (%s) -------------\n", turn + 1, current_player, (current_type == TYPE_HUMAN) ? "Humain" : "IA");
 
         int row = -1, col = -1;
 
+        // Appel de la fonction appropriée selon le type de joueur
         if (current_type == TYPE_HUMAN) {
-            player_move(&game, current_player, &row, &col);
+            player_move(&game, &row, &col);
         } else if (current_type == TYPE_MINIMAX) {
             printf("Attente de Minimax \n");
             best_move_minimax(&game, current_player, &row, &col, turn);
@@ -82,6 +78,7 @@ int main() {
             best_move_alphabeta(&game, current_player, &row, &col, turn);
         }
 
+        // Exécution du coup sur le plateau
         if (row != -1 && col != -1) {
             game.grid[row][col] = current_player;
             if (current_type != TYPE_HUMAN) {

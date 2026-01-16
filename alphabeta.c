@@ -1,48 +1,44 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <limits.h>
-#include <omp.h>
 #include "hex.h"
 
-// Algorithme Alpha-Bêta séquentiel pur
-// Optimisation de Minimax qui coupe les branches inutiles de l'arbre.
-int alphabeta(HexGame *game, int depth, int alpha, int beta, bool isMax) {
+// Algorithme Alpha-Bêta
+int alphabeta(HexGame *game, int prof, int alpha, int beta, bool isMax) {
     int score = eval(game);
-    
-    // Conditions d'arrêt
-    if (score == 1000 || score == -1000 || depth == 0) {
+
+    // Victoire, défaite ou limite de profondeur
+    if (score == 1000 || score == -1000 || prof == 0) {
         return score;
     }
-
-    if (isMax) { // Tour de Max (PLAYER1)
+    
+    // Tour de Max (PLAYER1)
+    if (isMax) { 
         int best = -INF;
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (game->grid[i][j] == EMPTY) {
-                    game->grid[i][j] = PLAYER1;
-                    int val = alphabeta(game, depth - 1, alpha, beta, false);
-                    game->grid[i][j] = EMPTY;
+                    game->grid[i][j] = PLAYER1; // Simule le coup
+                    int val = alphabeta(game, prof - 1, alpha, beta, false); // Appel récursif
+                    game->grid[i][j] = EMPTY; // Annule le coup
                     
                     if (val > best) best = val;
-                    if (best > alpha) alpha = best; // Mise à jour de la borne inférieure
-                    if (beta <= alpha) return best; // Coupure Beta : l'adversaire ne laissera pas jouer ce coup
+                    if (best > alpha) alpha = best; // Maj de la borne inférieure
+                    if (beta <= alpha) return best; // L'autre player va bloquer ce coup
                 }
             }
         }
         return best;
-    } else { // Tour de Min (PLAYER2)
+    // Tour de Min (PLAYER2)
+    } else { 
         int best = INF;
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (game->grid[i][j] == EMPTY) {
-                    game->grid[i][j] = PLAYER2;
-                    int val = alphabeta(game, depth - 1, alpha, beta, true);
-                    game->grid[i][j] = EMPTY;
+                    game->grid[i][j] = PLAYER2; // Simule le coup
+                    int val = alphabeta(game, prof - 1, alpha, beta, true); // Appel récursif
+                    game->grid[i][j] = EMPTY; // Annule le coup
                     
                     if (val < best) best = val;
-                    if (best < beta) beta = best; // Mise à jour de la borne supérieure
-                    if (beta <= alpha) return best; // Coupure Alpha
+                    if (best < beta) beta = best; // Maj de la borne supérieure
+                    if (beta <= alpha) return best; // L'autre player va bloquer ce coup
                 }
             }
         }
@@ -50,49 +46,53 @@ int alphabeta(HexGame *game, int depth, int alpha, int beta, bool isMax) {
     }
 }
 
-// Fonction principale pour lancer l'IA Alpha-Beta
-// Parallélisée avec OpenMP au premier niveau
-void best_move_alphabeta(HexGame *game, char player, int *row, int *col, int turn) {
+// Alpha-Beta + parallélisation avec OpenMP au premier niveau
+void best_move_alphabeta(HexGame *game, char player, int *Bestrow, int *Bestcol, int turn) {
 
+    // Coups aléatoires en début de partie
     if (turn < RANDTOUR) {
-        play_random_move(game, row, col);
+        play_random_move(game, Bestrow, Bestcol);
         return;
     }
 
     int bestVal = (player == PLAYER1) ? -INF : INF;
-    *row = -1; *col = -1;
+    *Bestrow = -1; 
+    *Bestcol = -1;
 
-//    for (int i = 0; i < SIZE; i++) {
-//        for (int j = 0; j < SIZE; j++) {
-//            if (game->grid[i][j] == EMPTY) {
-//                game->grid[i][j] = player;
-//                int val = alphabeta(game, PROFALPHABETA, -INF, INF, (player == PLAYER2));
-//                game->grid[i][j] = EMPTY;
-//
-    // Parallélisation OpenMP
-    #pragma omp parallel for num_threads(10) shared(game, bestVal, row, col)
+    // Parallélisation OpenMP au niveau 0 de l'arbre
+    #pragma omp parallel for num_threads(MAX_THREADS) shared(game, bestVal, Bestrow, Bestcol)
     for (int idx = 0; idx < SIZE*SIZE; idx++) {
         int i = idx / SIZE;
         int j = idx % SIZE;
 
         if (game->grid[i][j] == EMPTY) {
-            HexGame temp_game = *game; // Copie locale
+            HexGame temp_game = *game; // Copie locale pour le multi-threading
             temp_game.grid[i][j] = player;
             
-            // Appel récursif avec fenêtre alpha-beta initiale ouverte [-INF, INF]
+            // Appel de l'Alpha-Bêta pour évaluer ce coup
             int val = alphabeta(&temp_game, PROFALPHABETA, -INF, INF, (player == PLAYER2));
 
             #pragma omp critical
             {   
-                if (player == PLAYER1) {
+                if (player == PLAYER1) { // Max
                     if (val > bestVal) {
                         bestVal = val;
-                        *row = i; *col = j;
+                        *Bestrow = i; 
+                        *Bestcol = j;
+                    } else if (val == bestVal && (rand() % 2 == 0)) {
+                        // Choix aléatoire en cas d'égalité
+                        *Bestrow = i; 
+                        *Bestcol = j;
                     }
-                } else {
+                } else { // Min
                     if (val < bestVal) {
                         bestVal = val;
-                        *row = i; *col = j;
+                        *Bestrow = i; 
+                        *Bestcol = j;
+                    } else if (val == bestVal && (rand() % 2 == 0)) {
+                        // Choix aléatoire en cas d'égalité
+                        *Bestrow = i; 
+                        *Bestcol = j;
                     }
                 }
             }
