@@ -47,7 +47,7 @@ int play_game(int type1, int type2, int *nb_tours) {
         }
         
         turn++;
-        if (turn > SIZE * SIZE) {
+        if (turn > BOARD_SIZE * BOARD_SIZE) {
             *nb_tours = turn;
             return 0;
         }
