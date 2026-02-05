@@ -41,11 +41,11 @@ int main() {
 
     printf("------------- JEU HEX -------------\n");
     printf("Paramètre Joueur 1 \033[31mX\033[0m (Haut -> Bas) :\n");
-    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\nChoix : ");
+    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\n4. MCTS\nChoix : ");
     scanf("%d", &type1);
     
     printf("Paramètre Joueur 2 \033[34mO\033[0m (Gauche -> Droite) :\n");
-    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\nChoix : ");
+    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\n4. MCTS\nChoix : ");
     scanf("%d", &type2);
     
     // Nettoyage du tampon d'entrée après scanf
@@ -76,6 +76,9 @@ int main() {
         } else if (current_type == TYPE_ALPHABETA) {
             printf("Attente de Alpha-Beta \n");
             best_move_alphabeta(&game, current_player, &row, &col, turn);
+        } else if (current_type == TYPE_MCTS) {
+            printf("Attente de MCTS \n");
+            best_move_mcts(&game, current_player, &row, &col, turn);
         }
 
         // Exécution du coup sur le plateau
