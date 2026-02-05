@@ -10,6 +10,7 @@
 #define TYPE_MINIMAX 2
 #define TYPE_ALPHABETA 3
 #define TYPE_MCTS 4
+#define TYPE_ALPHAZERO 5
 #define MAX_SIZE 14 // Taille maximale du plateau
 #define EMPTY '.'
 #define PLAYER1 'X' // Joueur 1 Rouge Haut-Bas
@@ -44,5 +45,8 @@ void best_move_alphabeta(HexGame *game, char player, int *row, int *col, int tur
 
 // mcts.c
 void best_move_mcts(HexGame *game, char player, int *row, int *col, int turn);
+
+// alphazero.c
+void best_move_alphazero(HexGame *game, char player, int *row, int *col, int turn);
 
 #endif

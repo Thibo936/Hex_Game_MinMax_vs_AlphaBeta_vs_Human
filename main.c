@@ -66,11 +66,11 @@ int main() {
     init_game(&game);
     
     printf("Paramètre Joueur 1 \033[31mX\033[0m (Haut -> Bas) :\n");
-    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\n4. MCTS\nChoix : ");
+    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\n4. MCTS\n5. AlphaZero\nChoix : ");
     scanf("%d", &type1);
     
     printf("Paramètre Joueur 2 \033[34mO\033[0m (Gauche -> Droite) :\n");
-    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\n4. MCTS\nChoix : ");
+    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\n4. MCTS\n5. AlphaZero\nChoix : ");
     scanf("%d", &type2);
     
     // Nettoyage du tampon d'entrée après scanf
@@ -104,6 +104,9 @@ int main() {
         } else if (current_type == TYPE_MCTS) {
             printf("Attente de MCTS \n");
             best_move_mcts(&game, current_player, &row, &col, turn);
+        } else if (current_type == TYPE_ALPHAZERO) {
+            printf("Attente de AlphaZero \n");
+            best_move_alphazero(&game, current_player, &row, &col, turn);
         }
 
         // Exécution du coup sur le plateau

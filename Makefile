@@ -4,9 +4,9 @@ LDFLAGS = -lm
 TARGET = hex_game
 TEST_TARGET = test_ia
 TEST2_TARGET = test2
-SOURCES = main.c hex_game.c minimax.c alphabeta.c mcts.c
-TEST_SOURCES = test_ia.c hex_game.c minimax.c alphabeta.c mcts.c
-TEST2_SOURCES = test2.c hex_game.c minimax.c alphabeta.c mcts.c
+SOURCES = main.c hex_game.c minimax.c alphabeta.c mcts.c alphazero.c
+TEST_SOURCES = test_ia.c hex_game.c minimax.c alphabeta.c mcts.c alphazero.c
+TEST2_SOURCES = test2.c hex_game.c minimax.c alphabeta.c mcts.c alphazero.c
 
 all: $(TARGET)
 
