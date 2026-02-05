@@ -35,17 +35,42 @@ void player_move(HexGame *game, int *row, int *col) {
 int main() {
     srand(time(NULL));
     HexGame game;
-    init_game(&game);
     
     int type1, type2;
 
     printf("------------- JEU HEX -------------\n");
+    
+    // Sélection de la taille du plateau
+    printf("Choisissez la taille du plateau :\n");
+    printf("1. 9x9\n2. 11x11\n3. 14x14\nChoix : ");
+    int size_choice;
+    scanf("%d", &size_choice);
+    
+    switch(size_choice) {
+        case 1:
+            BOARD_SIZE = 9;
+            break;
+        case 2:
+            BOARD_SIZE = 11;
+            break;
+        case 3:
+            BOARD_SIZE = 14;
+            break;
+        default:
+            printf("Choix invalide, taille 9x9 par défaut.\n");
+            BOARD_SIZE = 9;
+    }
+    
+    printf("Taille du plateau : %dx%d\n\n", BOARD_SIZE, BOARD_SIZE);
+    
+    init_game(&game);
+    
     printf("Paramètre Joueur 1 \033[31mX\033[0m (Haut -> Bas) :\n");
-    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\nChoix : ");
+    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\n4. MCTS\n5. AlphaZero\nChoix : ");
     scanf("%d", &type1);
     
     printf("Paramètre Joueur 2 \033[34mO\033[0m (Gauche -> Droite) :\n");
-    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\nChoix : ");
+    printf("1. Humain\n2. Minimax\n3. Alpha-Beta\n4. MCTS\n5. AlphaZero\nChoix : ");
     scanf("%d", &type2);
     
     // Nettoyage du tampon d'entrée après scanf
@@ -76,6 +101,12 @@ int main() {
         } else if (current_type == TYPE_ALPHABETA) {
             printf("Attente de Alpha-Beta \n");
             best_move_alphabeta(&game, current_player, &row, &col, turn);
+        } else if (current_type == TYPE_MCTS) {
+            printf("Attente de MCTS \n");
+            best_move_mcts(&game, current_player, &row, &col, turn);
+        } else if (current_type == TYPE_ALPHAZERO) {
+            printf("Attente de AlphaZero \n");
+            best_move_alphazero(&game, current_player, &row, &col, turn);
         }
 
         // Exécution du coup sur le plateau

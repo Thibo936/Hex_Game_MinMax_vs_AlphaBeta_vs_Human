@@ -77,7 +77,7 @@ int play_game(int type1, int type2, int *nb_tours, double *temps_j1, double *tem
         turn++;
         
         // Sécurité : éviter boucle infinie
-        if (turn > SIZE * SIZE) {
+        if (turn > BOARD_SIZE * BOARD_SIZE) {
             *nb_tours = turn;
             return 0;
         }
@@ -166,10 +166,10 @@ ResultatMatch run_series(int type1, int type2, int nb_parties) {
 // Écrit les résultats dans un fichier
 void write_results(FILE *f, ResultatMatch *results, int nb_results) {
     fprintf(f, "================================================================================\n");
-    fprintf(f, "                    RÉSULTATS DES TESTS IA - JEU HEX %dx%d\n", SIZE, SIZE);
+    fprintf(f, "                    RÉSULTATS DES TESTS IA - JEU HEX %dx%d\n", BOARD_SIZE, BOARD_SIZE);
     fprintf(f, "================================================================================\n");
     fprintf(f, "Paramètres:\n");
-    fprintf(f, "  - Taille du plateau: %dx%d\n", SIZE, SIZE);
+    fprintf(f, "  - Taille du plateau: %dx%d\n", BOARD_SIZE, BOARD_SIZE);
     fprintf(f, "  - Profondeur Minimax: %d\n", PROFMINIMAX);
     fprintf(f, "  - Profondeur Alpha-Beta: %d\n", PROFALPHABETA);
     fprintf(f, "  - Tours aléatoires au début: %d\n", RANDTOUR);
@@ -323,10 +323,10 @@ int main() {
     srand(time(NULL));
     
     printf("================================================================================\n");
-    printf("           TEST AUTOMATIQUE DES IA - JEU HEX %dx%d\n", SIZE, SIZE);
+    printf("           TEST AUTOMATIQUE DES IA - JEU HEX %dx%d\n", BOARD_SIZE, BOARD_SIZE);
     printf("================================================================================\n");
     printf("Configuration:\n");
-    printf("  - Taille: %dx%d\n", SIZE, SIZE);
+    printf("  - Taille: %dx%d\n", BOARD_SIZE, BOARD_SIZE);
     printf("  - Profondeur Minimax: %d\n", PROFMINIMAX);
     printf("  - Profondeur Alpha-Beta: %d\n", PROFALPHABETA);
     printf("  - Nombre de parties par test: %d\n", NB_PARTIES);

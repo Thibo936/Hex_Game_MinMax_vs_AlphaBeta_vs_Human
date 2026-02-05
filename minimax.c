@@ -12,8 +12,8 @@ int minimax(HexGame *game, int prof, bool isMax) {
     // Tour de Max (PLAYER1)
     if (isMax) {
         int best = -INF;
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 if (game->grid[i][j] == EMPTY) {
                     game->grid[i][j] = PLAYER1; // Simule le coup
                     int val = minimax(game, prof - 1, false); // Appel récursif
@@ -27,8 +27,8 @@ int minimax(HexGame *game, int prof, bool isMax) {
     // Tour de Min (PLAYER2)
     } else {
         int best = INF;
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 if (game->grid[i][j] == EMPTY) {
                     game->grid[i][j] = PLAYER2; // Simule le coup
                     int val = minimax(game, prof - 1, true); // Appel récursif
@@ -55,9 +55,9 @@ void best_move_minimax(HexGame *game, char player, int *bestRow, int *bestCol, i
     *bestCol = -1;
 
     #pragma omp parallel for num_threads(MAX_THREADS) shared(game, bestVal, bestRow, bestCol)
-    for (int idx = 0; idx < SIZE*SIZE; idx++) {
-        int i = idx / SIZE;
-        int j = idx % SIZE;
+    for (int idx = 0; idx < BOARD_SIZE*BOARD_SIZE; idx++) {
+        int i = idx / BOARD_SIZE;
+        int j = idx % BOARD_SIZE;
         if (game->grid[i][j] == EMPTY) {
             HexGame temp_game = *game; // Copie locale pour le multi-threading
             temp_game.grid[i][j] = player;

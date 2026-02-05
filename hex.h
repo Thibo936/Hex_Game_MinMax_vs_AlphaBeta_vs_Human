@@ -9,7 +9,9 @@
 #define TYPE_HUMAN 1
 #define TYPE_MINIMAX 2
 #define TYPE_ALPHABETA 3
-#define SIZE 6 // Taille du plateau 6x6
+#define TYPE_MCTS 4
+#define TYPE_ALPHAZERO 5
+#define MAX_SIZE 14 // Taille maximale du plateau
 #define EMPTY '.'
 #define PLAYER1 'X' // Joueur 1 Rouge Haut-Bas
 #define PLAYER2 'O' // Joueur 2 Bleu Gauche-Droite
@@ -17,10 +19,15 @@
 #define RANDTOUR 0 // Nombre de tours rand avant que l'IA joue
 #define PROFMINIMAX 4 // Profondeur Minimax
 #define PROFALPHABETA 4 // Profondeur Alpha-Bêta
+#define MCTS_ITERATIONS 50000 // Nombre d'itérations MCTS
+#define MCTS_EXPLORATION 1.414 // Constante d'exploration UCB1 (sqrt(2))
 #define MAX_THREADS 10 // Nombre maximum de threads pour OpenMP
 
+// Variable globale pour la taille du plateau
+extern int BOARD_SIZE;
+
 typedef struct {
-    char grid[SIZE][SIZE];
+    char grid[MAX_SIZE][MAX_SIZE];
 } HexGame;
 
 // hex_game.c
@@ -35,5 +42,11 @@ void best_move_minimax(HexGame *game, char player, int *row, int *col, int turn)
 
 // alphabeta.c
 void best_move_alphabeta(HexGame *game, char player, int *row, int *col, int turn);
+
+// mcts.c
+void best_move_mcts(HexGame *game, char player, int *row, int *col, int turn);
+
+// alphazero.c
+void best_move_alphazero(HexGame *game, char player, int *row, int *col, int turn);
 
 #endif
