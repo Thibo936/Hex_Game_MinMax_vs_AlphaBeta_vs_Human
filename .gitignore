@@ -53,3 +53,8 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Build targets
+hex_game
+test_ia
+test2

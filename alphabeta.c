@@ -12,8 +12,8 @@ int alphabeta(HexGame *game, int prof, int alpha, int beta, bool isMax) {
     // Tour de Max (PLAYER1)
     if (isMax) { 
         int best = -INF;
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 if (game->grid[i][j] == EMPTY) {
                     game->grid[i][j] = PLAYER1; // Simule le coup
                     int val = alphabeta(game, prof - 1, alpha, beta, false); // Appel récursif
@@ -29,8 +29,8 @@ int alphabeta(HexGame *game, int prof, int alpha, int beta, bool isMax) {
     // Tour de Min (PLAYER2)
     } else { 
         int best = INF;
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 if (game->grid[i][j] == EMPTY) {
                     game->grid[i][j] = PLAYER2; // Simule le coup
                     int val = alphabeta(game, prof - 1, alpha, beta, true); // Appel récursif
@@ -61,9 +61,9 @@ void best_move_alphabeta(HexGame *game, char player, int *Bestrow, int *Bestcol,
 
     // Parallélisation OpenMP au niveau 0 de l'arbre
     #pragma omp parallel for num_threads(MAX_THREADS) shared(game, bestVal, Bestrow, Bestcol)
-    for (int idx = 0; idx < SIZE*SIZE; idx++) {
-        int i = idx / SIZE;
-        int j = idx % SIZE;
+    for (int idx = 0; idx < BOARD_SIZE*BOARD_SIZE; idx++) {
+        int i = idx / BOARD_SIZE;
+        int j = idx % BOARD_SIZE;
 
         if (game->grid[i][j] == EMPTY) {
             HexGame temp_game = *game; // Copie locale pour le multi-threading

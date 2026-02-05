@@ -10,7 +10,7 @@
 #define TYPE_MINIMAX 2
 #define TYPE_ALPHABETA 3
 #define TYPE_MCTS 4
-#define SIZE 6 // Taille du plateau 6x6
+#define MAX_SIZE 14 // Taille maximale du plateau
 #define EMPTY '.'
 #define PLAYER1 'X' // Joueur 1 Rouge Haut-Bas
 #define PLAYER2 'O' // Joueur 2 Bleu Gauche-Droite
@@ -22,8 +22,11 @@
 #define MCTS_EXPLORATION 1.414 // Constante d'exploration UCB1 (sqrt(2))
 #define MAX_THREADS 10 // Nombre maximum de threads pour OpenMP
 
+// Variable globale pour la taille du plateau
+extern int BOARD_SIZE;
+
 typedef struct {
-    char grid[SIZE][SIZE];
+    char grid[MAX_SIZE][MAX_SIZE];
 } HexGame;
 
 // hex_game.c

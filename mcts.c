@@ -18,9 +18,9 @@ typedef struct MCTSNode {
     int visits;                 // Nombre de visites
     double wins;                // Nombre de victoires cumulées
     struct MCTSNode *parent;    // Nœud parent
-    struct MCTSNode *children[SIZE * SIZE]; // Enfants possibles
+    struct MCTSNode *children[MAX_SIZE * MAX_SIZE]; // Enfants possibles
     int num_children;           // Nombre d'enfants créés
-    int untried_moves[SIZE * SIZE][2]; // Coups non encore essayés
+    int untried_moves[MAX_SIZE * MAX_SIZE][2]; // Coups non encore essayés
     int num_untried;            // Nombre de coups non essayés
 } MCTSNode;
 
@@ -42,8 +42,8 @@ MCTSNode *mcts_create_node(HexGame *state, int move_row, int move_col, char play
 
     // Initialiser les coups non essayés (cases vides)
     node->num_untried = 0;
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
             if (state->grid[i][j] == EMPTY) {
                 node->untried_moves[node->num_untried][0] = i;
                 node->untried_moves[node->num_untried][1] = j;
@@ -52,7 +52,7 @@ MCTSNode *mcts_create_node(HexGame *state, int move_row, int move_col, char play
         }
     }
 
-    for (int i = 0; i < SIZE * SIZE; i++) {
+    for (int i = 0; i < MAX_SIZE * MAX_SIZE; i++) {
         node->children[i] = NULL;
     }
 
@@ -142,10 +142,10 @@ char mcts_simulate(HexGame *game, char current_player) {
     if (winner != EMPTY) return winner;
 
     // Créer la liste des cases vides
-    int empty_cells[SIZE * SIZE][2];
+    int empty_cells[MAX_SIZE * MAX_SIZE][2];
     int num_empty = 0;
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
             if (sim.grid[i][j] == EMPTY) {
                 empty_cells[num_empty][0] = i;
                 empty_cells[num_empty][1] = j;
@@ -249,6 +249,11 @@ void best_move_mcts(HexGame *game, char player, int *bestRow, int *bestCol, int 
             *bestRow = child->move_row;
             *bestCol = child->move_col;
         }
+    }
+
+    // Si aucun coup n'a été trouvé (ne devrait pas arriver), jouer aléatoirement
+    if (*bestRow == -1 || *bestCol == -1) {
+        play_random_move(game, bestRow, bestCol);
     }
 
     // Libérer l'arbre
